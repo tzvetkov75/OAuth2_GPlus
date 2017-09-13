@@ -19,17 +19,24 @@
 Command-line application that retrieves the list of the user's calendars."""
 
 import sys
+import logging
+import httplib2
 
 from oauth2client import client
 from googleapiclient import sample_tools
 
+# logging
+logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
 
 def main(argv):
     # Authenticate and construct service.
+
     service, flags = sample_tools.init(
         argv, 'calendar', 'v3', __doc__, __file__,
-        scope='https://www.googleapis.com/auth/calendar.readonly')
-
+        scope='openid profile email https://www.googleapis.com/auth/calendar.readonly')
+    
     try:
         page_token = None
 
@@ -45,6 +52,8 @@ def main(argv):
     except client.AccessTokenRefreshError:
         print('The credentials have been revoked or expired, please re-run'
               'the application to re-authorize.')
+
+httplib2.debuglevel = 4
 
 if __name__ == '__main__':
     main(sys.argv)
